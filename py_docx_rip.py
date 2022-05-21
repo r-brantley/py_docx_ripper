@@ -7,7 +7,6 @@ import zipfile
 
 #Set root for ripper
 ripbase = "/Users/ryanbrantley/Library/CloudStorage/OneDrive-SharedLibraries-OneMedNet/Compliance - Word Docs/"
-
 print(ripbase)
 
 
@@ -17,7 +16,6 @@ print(ripbase)
 
 ## POC for Word docx drill down into XML content
 doc = ripbase+"0XX Corporate WIP/SOP-015 Business Continuity/SOP-015 Business Continuity.docx"
-
 docz = zipfile.ZipFile(doc, mode="r")
 docz.namelist()
 
@@ -25,6 +23,6 @@ ripxml = xml.dom.minidom.parseString(docz.read('word/document.xml')).toprettyxml
 ripxml = str(docz.read('word/document.xml'))
 docz.close
 
+#quick and dirty regex pattern match to grab raw content found between <w:t> tags
 raw = re.findall('<w:t(?:>| xml:space="preserve">)(.*?)<.+?>', ripxml)
-
 print(raw)
