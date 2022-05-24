@@ -23,18 +23,24 @@ eval "$(pyenv virtualenv-init -)"
 
 3 - (OPTIONAL) set local / global python versions as necessary
 
-`pyenv local 3.x.x`
+```zsh
+pyenv local 3.10.2
+```
 
 ## Install / Configure Pipenv
 We will use pipenv to mantain and manage the python dependencies for the project.  We will also use pipenv as our virtual environment manager even though both pipenv and pyenv both have the capability to spin up venvs.
 
 1 - Install pipenv package and environment manager
 
-`pip install pipenv`
+```zsh
+pip install pipenv
+```
 
 2 - install virtual envinronment python import dependencies
 
-`pipenv install ipykernel numpy pandas tree jupyter -v --clear`
+```zsh
+pipenv install ipykernel numpy pandas tree jupyter -v --clear
+```
 
 ipykernel and jupyter are being used for development purposes.  
 
