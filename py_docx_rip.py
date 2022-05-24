@@ -1,13 +1,21 @@
 #modules used for extracting information from word / xml documents
 import os
 import re
-import subprocess
 import xml.dom.minidom
 import zipfile
+
+def dotfile_file(file): #is it is a dotfile
+    if raw := re.match('(^[.]\w+$)', file) is not None:
+        return(True)
+
+def docx_file(file): #is it docx file extension?
+    if raw := re.search('^[^.]+$|\.(?=docx)[^. \n\r]', file) is not None:
+        return(True)
 
 #Set root for ripper
 ripbase = "/Users/ryanbrantley/Library/CloudStorage/OneDrive-SharedLibraries-OneMedNet/Compliance - Word Docs/"
 print(ripbase)
+
 
 
 ### test tree bash run for loops later
