@@ -4,33 +4,71 @@ import re
 import xml.dom.minidom
 import zipfile
 
-def dotfile_file(file): #is it is a dotfile
-    if raw := re.match('(^[.]\w+$)', file) is not None:
+# Set root for ripper
+riproot = "/Users/ryanbrantley/Library/CloudStorage/OneDrive-SharedLibraries-OneMedNet/Compliance - Word Docs/"
+
+# is it is a dotfile
+def dotfile_file(file):
+    if raw := re.match('^[.][\S]+$', file) is not None:
         return(True)
 
-def docx_file(file): #is it docx file extension?
+# is it docx file extension?
+def docx_file(file):
     if raw := re.search('^[^.]+$|\.(?=docx)[^. \n\r]', file) is not None:
         return(True)
 
-#Set root for ripper
-ripbase = "/Users/ryanbrantley/Library/CloudStorage/OneDrive-SharedLibraries-OneMedNet/Compliance - Word Docs/"
-print(ripbase)
+# function to get the path to the file to define breadcrumb taxonomy
+def doc_tax(path):
+    cookie = path.split("/")
+    if (len(cookie) >= 1 and range(len(cookie))):
+        slices = []
+        for c in range(len(cookie)):
+            crumb = cookie[c]
+            slices.append(crumb)
+        return(slices)
 
+# pipe the XML content section of docx to string
+def str_xml(file):
+    docx = zipfile.ZipFile(file, mode="r")
+    ripxml = xml.dom.minidom.parseString(docx.read('word/document.xml'))
+    ripxml = str(docx.read('word/document.xml'))
+    docx.close
+    return ripxml
+    
+# pull the relevant groups and sections out of the docx XML
+def docx_content(docx):
+    docx_sect = []
+    praw = re.findall(r"<w:pStyle w:val=\"([\S]+)\"\/>[.\s\S]*?(<w:(?:t|t xml:[.\S]+)>(?:[.\s\S]+?)<\/w:p>)", docx)
+    for row in praw:
+        tag = row[0]
+        for val in row:
+            nest = re.findall(r"(?:<w:(?:t|t xml:[.\S]+)>([.\s\S]+?)<\/w:t>)",val)
+            s = ' '.join(nest)
+        docx_sect.append([tag, s])
+    return docx_sect
 
+def tree_printer(riproot):
+    payload = []
+    for root, dirs, files in os.walk(riproot):
+        for f in range(len(files)):
+            file = files[f]
+            if not dotfile_file(file): ### skip dotfiles
+                taxroot = root.split(riproot)[1] #capture raw taxonomy root of SOP
+                if docx_file(file): ### what do we do to docx files??
+                    content = str_xml(root+"/"+file)
+                    content = docx_content(content)
+                    rip_out = {
+                        'file': file,
+                        'taxonomy': taxroot,
+                        'content': content
+                    }
+                    payload.append(rip_out)
+                    print("BING! BONG!")
+                if not docx_file(file):
+                    print("DO THE OTHER FILE HANDLER FOR:"+file)
+                    #do pdf and vsd attachment
+    
+    return payload
 
-### test tree bash run for loops later
-    #bash_cmd = "tree "+ripbase
-    #process = subprocess.run(bash_cmd, shell=True, check=True, executable='/bin/bash')
-
-## POC for Word docx drill down into XML content
-doc = ripbase+"0XX Corporate WIP/SOP-015 Business Continuity/SOP-015 Business Continuity.docx"
-docz = zipfile.ZipFile(doc, mode="r")
-docz.namelist()
-
-ripxml = xml.dom.minidom.parseString(docz.read('word/document.xml')).toprettyxml(indent='  ')
-ripxml = str(docz.read('word/document.xml'))
-docz.close
-
-#quick and dirty regex pattern match to grab raw content found between <w:t> tags
-raw = re.findall('<w:t(?:>| xml:space="preserve">)(.*?)<.+?>', ripxml)
-print(raw)
+files = tree_printer(riproot)
+print(files)
