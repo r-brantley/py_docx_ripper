@@ -9,6 +9,7 @@ numpy = "*"
 pandas = "*"
 jupyter = "*"
 tree = "*"
+atlassian-python-api = "*"
 
 [dev-packages]
 
