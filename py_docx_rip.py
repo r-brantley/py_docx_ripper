@@ -58,6 +58,52 @@ def nsx(doc):
                 
         return out
 
+def confluence_style_xmap(dict):
+    style_xmap = {
+        "AppendixSubHeading":"$",
+        "Body":"$",
+        "BodyText":"$",
+        "BodyTextFirstIndent":"$",
+        "BodyTextIndent":"$",
+        "Bullet1":"* $",
+        "default":"$",
+        "DocumentHeader":"h1. $",
+        "Header":"$",
+        "Heading1":"h1. $",
+        "Heading2":"h2. $",
+        "Heading3":"h3. $",
+        "Heading4":"h4. $",
+        "HTMLPreformatted":"$",
+        "Index1":"$",
+        "Index2":"$",
+        "ListBullet2":"* $",
+        "Listnumbers":"# $",
+        "ListParagraph":"* $",
+        "NestedList":"* $",
+        "NestedList4":"* $",
+        "NestedList5":"* $",
+        "NormalWeb":"$",
+        "Number-OMN":"$",
+        "PlainText":"$",
+        "r4":"$",
+        "SOPBody":"$",
+        "SOPBodyBullet":"* $",
+        "SOPHeaderTable":"||heading $| ",
+        "Subtitle":"$",
+        "TableHeading":"||heading $|",
+        "TOC1":"# $",
+        "TOC2":"## $",
+        "TOC3":"### $",
+        "TOCHeading":"h2. $",
+        "Warning":"{{color:red}}${{color}}"
+    }
+    out = []
+    for x in dict:
+        st = x["style"]
+        pattern = str(style_xmap.get(st))
+        out.append(pattern.replace('$',x["body"]))
+    return out
+
 def tree_printer(riproot):
     payload = []
 
@@ -69,8 +115,13 @@ def tree_printer(riproot):
                 taxroot = root.split(riproot)[1] #capture taxonomy root of SOP
                 
                 if docx_file(file):
-                    content = str_xml(root+"/"+file)
-                    content = nsx(content)
+                    content = ''
+                    content_pre = str_xml(root+"/"+file)
+                    content_pre = nsx(content_pre)
+                    content_pre = confluence_style_xmap(content_pre)
+                    for c in content_pre:
+                        content += c+"\\"
+
                     rip_out = {
                         'file': file,
                         'root': root,
@@ -80,59 +131,11 @@ def tree_printer(riproot):
                     payload.append(rip_out)
                 
                 if not docx_file(file): #handle non-docx files that are not dotfiles
+                    # xlsx, pdf, vsd 
                     pass
 
     return payload
 
-#def uq(alist):
-#    out = []
-#    alist = (list(alist))
-#    for x in range(len(alist)):
-#       for y in range(len(alist[x]["content"])):
-#           print(alist[x]["content"][y])
-#           if alist[x]["content"][y]["style"] not in out:
-#               out.append(str(alist[x]["content"][y]["style"]))
-#    return out
 
-
-#allofit = tree_printer(riproot)
-
-#print(*uq(allofit), sep="\n")
-
-style_xmap = {
-    "AppendixSubHeading":"$",
-    "Body":"$",
-    "BodyText":"$",
-    "BodyTextFirstIndent":"$",
-    "BodyTextIndent":"$",
-    "Bullet1":"* $",
-    "DocumentHeader":"h1. $",
-    "Header":"$",
-    "Heading1":"h1. $",
-    "Heading2":"h2. $",
-    "Heading3":"h3. $",
-    "Heading4":"h4. $",
-    "HTMLPreformatted":"$",
-    "Index1":"$",
-    "Index2":"$",
-    "ListBullet2":"* $",
-    "Listnumbers":"# $",
-    "ListParagraph":"* $",
-    "NestedList":"* $",
-    "NestedList4":"* $",
-    "NestedList5":"* $",
-    "NormalWeb":"$",
-    "Number-OMN":"$",
-    "PlainText":"$",
-    "r4":"$",
-    "SOPBody":"$",
-    "SOPBodyBullet":"* $",
-    "SOPHeaderTable":"||heading $| ",
-    "Subtitle":"$",
-    "TableHeading":"||heading $|",
-    "TOC1":"# $",
-    "TOC2":"## $",
-    "TOC3":"### $",
-    "TOCHeading":"h2. $",
-    "Warning":"{{color:red}}${{color\}}"
-}
+allofit = tree_printer(riproot)
+print(*allofit, sep="\n\n\t\t")
