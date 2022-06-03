@@ -84,16 +84,55 @@ def tree_printer(riproot):
 
     return payload
 
-def uq(alist):
-    out = []
-    alist = (list(alist))
-    for x in range(len(alist)):
-       for y in range(len(alist[x]["content"])):
-            if alist[x]["content"][y]["style"] not in out:
-                out.append(str(alist[x]["content"][y]["style"]))
-    return out
+#def uq(alist):
+#    out = []
+#    alist = (list(alist))
+#    for x in range(len(alist)):
+#       for y in range(len(alist[x]["content"])):
+#           print(alist[x]["content"][y])
+#           if alist[x]["content"][y]["style"] not in out:
+#               out.append(str(alist[x]["content"][y]["style"]))
+#    return out
 
 
-allofit = tree_printer(riproot)
+#allofit = tree_printer(riproot)
 
-print(*uq(allofit), sep="\n")
+#print(*uq(allofit), sep="\n")
+
+style_xmap = {
+    "AppendixSubHeading":"$",
+    "Body":"$",
+    "BodyText":"$",
+    "BodyTextFirstIndent":"$",
+    "BodyTextIndent":"$",
+    "Bullet1":"* $",
+    "DocumentHeader":"h1. $",
+    "Header":"$",
+    "Heading1":"h1. $",
+    "Heading2":"h2. $",
+    "Heading3":"h3. $",
+    "Heading4":"h4. $",
+    "HTMLPreformatted":"$",
+    "Index1":"$",
+    "Index2":"$",
+    "ListBullet2":"* $",
+    "Listnumbers":"# $",
+    "ListParagraph":"* $",
+    "NestedList":"* $",
+    "NestedList4":"* $",
+    "NestedList5":"* $",
+    "NormalWeb":"$",
+    "Number-OMN":"$",
+    "PlainText":"$",
+    "r4":"$",
+    "SOPBody":"$",
+    "SOPBodyBullet":"* $",
+    "SOPHeaderTable":"||heading $| ",
+    "Subtitle":"$",
+    "TableHeading":"||heading $|",
+    "TOC1":"# $",
+    "TOC2":"## $",
+    "TOC3":"### $",
+    "TOCHeading":"h2. $",
+    "Warning":"{{color:red}}${{color\}}"
+}
