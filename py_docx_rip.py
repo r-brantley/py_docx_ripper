@@ -6,7 +6,7 @@ import zipfile
 from atlassian import confluence
 
 # Set root for ripper
-riproot = "/Users/ryanbrantley/Library/CloudStorage/OneDrive-SharedLibraries-OneMedNet/Compliance - Word Docs/"
+riproot = "/"
 
 # is it is a dotfile
 def dotfile_file(file):
